@@ -1,4 +1,4 @@
-# AlphaLib Chat
+# AlphaLib Chat v2
 
 Chat IA + Conseiller intégré au website AlphaLib / ERPNext.
 
