@@ -1,0 +1,9 @@
+[project]
+name = "alphalib_chat"
+version = "0.1.0"
+description = "AlphaLib Chat - IA + Conseiller pour ERPNext"
+requires-python = ">=3.10"
+
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.backends._legacy:_Backend"
