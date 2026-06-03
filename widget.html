@@ -1,7 +1,11 @@
 <!--
   ╔══════════════════════════════════════════════════════════════╗
-  ║  ALPHALIB CHATBOX — IA + Conseiller (deux onglets)          ║
-  ║  Coller à la fin du Head HTML dans Website Settings          ║
+  ║  ALPHALIB CHATBOX v2 — IA + Conseiller (deux onglets)       ║
+  ║  - Vérifie les permissions via AlphaLib Chat Settings        ║
+  ║  - Charge l'historique des messages                          ║
+  ║  - Configurable depuis le desk ERPNext                       ║
+  ║                                                              ║
+  ║  Coller à la fin du Head HTML dans Website Settings           ║
   ╚══════════════════════════════════════════════════════════════╝
 -->
 
@@ -21,390 +25,114 @@
 }
 
 #alc-toggle {
-  position: fixed;
-  bottom: 28px;
-  right: 28px;
-  z-index: 99999;
-  width: 60px;
-  height: 60px;
-  border-radius: 50%;
-  background: var(--alc-coral);
-  border: none;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  position: fixed; bottom: 28px; right: 28px; z-index: 99999;
+  width: 60px; height: 60px; border-radius: 50%;
+  background: var(--alc-coral); border: none; cursor: pointer;
+  display: none; align-items: center; justify-content: center;
   box-shadow: 0 8px 32px rgba(232, 90, 79, 0.4);
   transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.3s ease;
 }
-#alc-toggle:hover {
-  transform: scale(1.08);
-  box-shadow: 0 12px 40px rgba(232, 90, 79, 0.5);
-}
-#alc-toggle .alc-icon-open,
-#alc-toggle.active .alc-icon-close { display: flex; }
-#alc-toggle.active .alc-icon-open,
-#alc-toggle .alc-icon-close { display: none; }
+#alc-toggle.ready { display: flex; }
+#alc-toggle:hover { transform: scale(1.08); box-shadow: 0 12px 40px rgba(232, 90, 79, 0.5); }
+#alc-toggle .alc-icon-open, #alc-toggle.active .alc-icon-close { display: flex; }
+#alc-toggle.active .alc-icon-open, #alc-toggle .alc-icon-close { display: none; }
 
 #alc-badge {
-  position: absolute;
-  top: -3px; right: -3px;
-  min-width: 20px; height: 20px;
-  background: var(--alc-primary);
-  border-radius: 10px;
-  border: 2px solid white;
-  font-size: 10px;
-  font-weight: 700;
-  color: white;
-  font-family: var(--alc-font);
-  display: none;
-  align-items: center;
-  justify-content: center;
-  padding: 0 5px;
+  position: absolute; top: -3px; right: -3px;
+  min-width: 20px; height: 20px; background: var(--alc-primary);
+  border-radius: 10px; border: 2px solid white;
+  font-size: 10px; font-weight: 700; color: white;
+  font-family: var(--alc-font); display: none;
+  align-items: center; justify-content: center; padding: 0 5px;
 }
 #alc-badge.show { display: flex; }
 
 #alc-window {
-  position: fixed;
-  bottom: 100px;
-  right: 28px;
-  z-index: 99998;
-  width: 400px;
-  max-width: calc(100vw - 40px);
-  height: 580px;
-  max-height: calc(100vh - 140px);
-  background: var(--alc-surface);
-  border-radius: 20px;
+  position: fixed; bottom: 100px; right: 28px; z-index: 99998;
+  width: 400px; max-width: calc(100vw - 40px);
+  height: 580px; max-height: calc(100vh - 140px);
+  background: var(--alc-surface); border-radius: 20px;
   box-shadow: 0 25px 60px rgba(0,0,0,0.15), 0 8px 20px rgba(0,0,0,0.08);
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  font-family: var(--alc-font);
-  opacity: 0;
-  transform: translateY(20px) scale(0.95);
-  pointer-events: none;
-  transition: opacity 0.35s cubic-bezier(0.16,1,0.3,1),
-              transform 0.35s cubic-bezier(0.16,1,0.3,1);
+  display: flex; flex-direction: column; overflow: hidden;
+  font-family: var(--alc-font); opacity: 0;
+  transform: translateY(20px) scale(0.95); pointer-events: none;
+  transition: opacity 0.35s cubic-bezier(0.16,1,0.3,1), transform 0.35s cubic-bezier(0.16,1,0.3,1);
 }
-#alc-window.visible {
-  opacity: 1;
-  transform: translateY(0) scale(1);
-  pointer-events: all;
-}
+#alc-window.visible { opacity: 1; transform: translateY(0) scale(1); pointer-events: all; }
 
-/* Header */
-.alc-header {
-  background: var(--alc-primary);
-  padding: 16px 20px;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  flex-shrink: 0;
-}
-.alc-header-icon {
-  width: 38px; height: 38px;
-  background: rgba(255,255,255,0.12);
-  border-radius: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-}
+.alc-header { background: var(--alc-primary); padding: 16px 20px; display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
+.alc-header-icon { width: 38px; height: 38px; background: rgba(255,255,255,0.12); border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
 .alc-header h3 { margin: 0; font-size: 15px; font-weight: 600; color: #fff; }
 .alc-header p { margin: 2px 0 0; font-size: 12px; color: rgba(255,255,255,0.55); }
 
-/* Tabs */
-.alc-tabs {
-  display: flex;
-  border-bottom: 1px solid var(--alc-border);
-  flex-shrink: 0;
-  background: var(--alc-surface);
-}
-.alc-tab {
-  flex: 1;
-  padding: 11px 0;
-  font-family: var(--alc-font);
-  font-size: 13px;
-  font-weight: 600;
-  border: none;
-  background: none;
-  cursor: pointer;
-  color: var(--alc-text-muted);
-  border-bottom: 2.5px solid transparent;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  transition: all 0.2s ease;
-}
-.alc-tab.active {
-  color: var(--alc-coral);
-  border-bottom-color: var(--alc-coral);
-}
-.alc-tab-badge {
-  background: var(--alc-coral);
-  color: white;
-  font-size: 10px;
-  font-weight: 700;
-  padding: 1px 6px;
-  border-radius: 10px;
-  min-width: 16px;
-  text-align: center;
-  display: none;
-}
+.alc-tabs { display: flex; border-bottom: 1px solid var(--alc-border); flex-shrink: 0; background: var(--alc-surface); }
+.alc-tab { flex: 1; padding: 11px 0; font-family: var(--alc-font); font-size: 13px; font-weight: 600; border: none; background: none; cursor: pointer; color: var(--alc-text-muted); border-bottom: 2.5px solid transparent; display: flex; align-items: center; justify-content: center; gap: 6px; transition: all 0.2s ease; }
+.alc-tab.active { color: var(--alc-coral); border-bottom-color: var(--alc-coral); }
+.alc-tab-badge { background: var(--alc-coral); color: white; font-size: 10px; font-weight: 700; padding: 1px 6px; border-radius: 10px; min-width: 16px; text-align: center; display: none; }
 .alc-tab-badge.show { display: inline-block; }
 
-/* Messages area */
-.alc-messages {
-  flex: 1;
-  overflow-y: auto;
-  padding: 16px 14px;
-  background: var(--alc-bg);
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  scroll-behavior: smooth;
-}
+.alc-messages { flex: 1; overflow-y: auto; padding: 16px 14px; background: var(--alc-bg); display: flex; flex-direction: column; gap: 10px; scroll-behavior: smooth; }
 .alc-messages::-webkit-scrollbar { width: 4px; }
 .alc-messages::-webkit-scrollbar-thumb { background: var(--alc-border); border-radius: 10px; }
 
-.alc-msg {
-  max-width: 82%;
-  padding: 11px 15px;
-  font-size: 13.5px;
-  line-height: 1.55;
-  border-radius: 14px;
-  animation: alc-fade 0.3s cubic-bezier(0.16,1,0.3,1) both;
-  word-wrap: break-word;
-}
-@keyframes alc-fade {
-  from { opacity: 0; transform: translateY(6px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-.alc-msg.user {
-  align-self: flex-end;
-  background: var(--alc-primary);
-  color: #fff;
-  border-bottom-right-radius: 4px;
-}
-.alc-msg.ai, .alc-msg.advisor {
-  align-self: flex-start;
-  background: var(--alc-surface);
-  color: var(--alc-text);
-  border-bottom-left-radius: 4px;
-  border: 1px solid var(--alc-border);
-}
+.alc-msg { max-width: 82%; padding: 11px 15px; font-size: 13.5px; line-height: 1.55; border-radius: 14px; animation: alc-fade 0.3s cubic-bezier(0.16,1,0.3,1) both; word-wrap: break-word; }
+@keyframes alc-fade { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+.alc-msg.user { align-self: flex-end; background: var(--alc-primary); color: #fff; border-bottom-right-radius: 4px; }
+.alc-msg.ai, .alc-msg.advisor { align-self: flex-start; background: var(--alc-surface); color: var(--alc-text); border-bottom-left-radius: 4px; border: 1px solid var(--alc-border); }
 
-/* Advisor message with avatar */
-.alc-advisor-row {
-  display: flex;
-  gap: 8px;
-  align-items: flex-end;
-  align-self: flex-start;
-  max-width: 85%;
-}
-.alc-advisor-avatar {
-  width: 28px; height: 28px;
-  border-radius: 50%;
-  background: var(--alc-coral);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  font-size: 11px;
-  font-weight: 600;
-  color: white;
-}
-.alc-advisor-name {
-  font-size: 11px;
-  font-weight: 600;
-  color: var(--alc-coral);
-  margin: 0 0 3px;
-}
+.alc-advisor-row { display: flex; gap: 8px; align-items: flex-end; align-self: flex-start; max-width: 85%; }
+.alc-advisor-avatar { width: 28px; height: 28px; border-radius: 50%; background: var(--alc-coral); display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 11px; font-weight: 600; color: white; }
+.alc-advisor-name { font-size: 11px; font-weight: 600; color: var(--alc-coral); margin: 0 0 3px; }
 
-/* Typing */
-.alc-typing {
-  align-self: flex-start;
-  display: flex;
-  gap: 5px;
-  padding: 13px 18px;
-  background: var(--alc-surface);
-  border-radius: 14px;
-  border-bottom-left-radius: 4px;
-  border: 1px solid var(--alc-border);
-}
-.alc-typing span {
-  width: 6px; height: 6px;
-  background: var(--alc-text-muted);
-  border-radius: 50%;
-  opacity: 0.4;
-  animation: alc-dot 1.4s infinite ease-in-out;
-}
+.alc-typing { align-self: flex-start; display: flex; gap: 5px; padding: 13px 18px; background: var(--alc-surface); border-radius: 14px; border-bottom-left-radius: 4px; border: 1px solid var(--alc-border); }
+.alc-typing span { width: 6px; height: 6px; background: var(--alc-text-muted); border-radius: 50%; opacity: 0.4; animation: alc-dot 1.4s infinite ease-in-out; }
 .alc-typing span:nth-child(2) { animation-delay: 0.2s; }
 .alc-typing span:nth-child(3) { animation-delay: 0.4s; }
-@keyframes alc-dot {
-  0%,80%,100% { transform: translateY(0); opacity: 0.4; }
-  40% { transform: translateY(-5px); opacity: 1; }
-}
+@keyframes alc-dot { 0%,80%,100% { transform: translateY(0); opacity: 0.4; } 40% { transform: translateY(-5px); opacity: 1; } }
 
-/* Suggestions */
-.alc-suggestions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  align-self: flex-start;
-  max-width: 90%;
-}
-.alc-suggestions button {
-  font-family: var(--alc-font);
-  font-size: 12px;
-  padding: 6px 13px;
-  border-radius: 20px;
-  border: 1px solid var(--alc-border);
-  background: var(--alc-surface);
-  color: var(--alc-coral);
-  cursor: pointer;
-  font-weight: 500;
-  transition: all 0.2s;
-  white-space: nowrap;
-}
-.alc-suggestions button:hover {
-  background: var(--alc-coral);
-  color: white;
-  border-color: var(--alc-coral);
-}
+.alc-suggestions { display: flex; flex-wrap: wrap; gap: 6px; align-self: flex-start; max-width: 90%; }
+.alc-suggestions button { font-family: var(--alc-font); font-size: 12px; padding: 6px 13px; border-radius: 20px; border: 1px solid var(--alc-border); background: var(--alc-surface); color: var(--alc-coral); cursor: pointer; font-weight: 500; transition: all 0.2s; white-space: nowrap; }
+.alc-suggestions button:hover { background: var(--alc-coral); color: white; border-color: var(--alc-coral); }
 
-/* Input */
-.alc-input-area {
-  padding: 12px 14px;
-  background: var(--alc-surface);
-  border-top: 1px solid var(--alc-border);
-  display: flex;
-  gap: 10px;
-  align-items: flex-end;
-  flex-shrink: 0;
-}
-#alc-input {
-  flex: 1;
-  font-family: var(--alc-font);
-  font-size: 13.5px;
-  padding: 9px 14px;
-  border: 1px solid var(--alc-border);
-  border-radius: 12px;
-  background: var(--alc-bg);
-  color: var(--alc-text);
-  resize: none;
-  outline: none;
-  max-height: 90px;
-  line-height: 1.45;
-  transition: border-color 0.2s;
-}
+.alc-input-area { padding: 12px 14px; background: var(--alc-surface); border-top: 1px solid var(--alc-border); display: flex; gap: 10px; align-items: flex-end; flex-shrink: 0; }
+#alc-input { flex: 1; font-family: var(--alc-font); font-size: 13.5px; padding: 9px 14px; border: 1px solid var(--alc-border); border-radius: 12px; background: var(--alc-bg); color: var(--alc-text); resize: none; outline: none; max-height: 90px; line-height: 1.45; transition: border-color 0.2s; }
 #alc-input:focus { border-color: var(--alc-coral); }
 #alc-input::placeholder { color: var(--alc-text-muted); }
 
-#alc-send {
-  width: 38px; height: 38px;
-  border-radius: 10px;
-  border: none;
-  background: var(--alc-coral);
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  transition: background 0.2s, transform 0.15s;
-}
+#alc-send { width: 38px; height: 38px; border-radius: 10px; border: none; background: var(--alc-coral); cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: background 0.2s, transform 0.15s; }
 #alc-send:hover { background: var(--alc-coral-hover); }
 #alc-send:active { transform: scale(0.92); }
 #alc-send:disabled { opacity: 0.5; cursor: not-allowed; }
 
-.alc-footer {
-  text-align: center;
-  padding: 5px;
-  font-size: 10px;
-  color: var(--alc-text-muted);
-}
+.alc-footer { text-align: center; padding: 5px; font-size: 10px; color: var(--alc-text-muted); }
 
-/* Status indicator */
-.alc-status {
-  font-size: 11px;
-  color: var(--alc-text-muted);
-  text-align: center;
-  padding: 6px 0;
-}
-.alc-status-dot {
-  width: 6px; height: 6px;
-  border-radius: 50%;
-  display: inline-block;
-  margin-right: 4px;
-  vertical-align: middle;
-}
-.alc-status-dot.online { background: #34D399; }
-.alc-status-dot.offline { background: #CBD5E1; }
-
-/* Mobile */
 @media (max-width: 480px) {
-  #alc-window {
-    right: 0; bottom: 0;
-    width: 100vw; height: 100vh;
-    max-height: 100vh;
-    border-radius: 0;
-  }
+  #alc-window { right: 0; bottom: 0; width: 100vw; height: 100vh; max-height: 100vh; border-radius: 0; }
   #alc-toggle { bottom: 20px; right: 20px; }
 }
 </style>
 
-<!-- Bouton flottant -->
 <button id="alc-toggle" aria-label="Ouvrir le chat">
   <span id="alc-badge">1</span>
-  <span class="alc-icon-open">
-    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-  </span>
-  <span class="alc-icon-close">
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-  </span>
+  <span class="alc-icon-open"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></span>
+  <span class="alc-icon-close"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></span>
 </button>
 
-<!-- Fenêtre de chat -->
 <div id="alc-window">
-  <!-- Header -->
   <div class="alc-header">
-    <div class="alc-header-icon">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-    </div>
-    <div>
-      <h3>AlphaLib Chat</h3>
-      <p>Assistance et conseil</p>
-    </div>
+    <div class="alc-header-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
+    <div><h3>AlphaLib Chat</h3><p>Assistance et conseil</p></div>
   </div>
-
-  <!-- Onglets -->
-  <div class="alc-tabs">
-    <button class="alc-tab active" data-tab="ia" id="alc-tab-ia">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
-      Assistant IA
-    </button>
-    <button class="alc-tab" data-tab="advisor" id="alc-tab-advisor">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-      Mon conseiller
-      <span class="alc-tab-badge" id="alc-advisor-badge">0</span>
-    </button>
+  <div class="alc-tabs" id="alc-tabs">
+    <button class="alc-tab active" data-tab="ia" id="alc-tab-ia"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg> Assistant IA</button>
+    <button class="alc-tab" data-tab="advisor" id="alc-tab-advisor"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> <span id="alc-advisor-tab-label">Mon conseiller</span> <span class="alc-tab-badge" id="alc-advisor-badge">0</span></button>
   </div>
-
-  <!-- Panel IA -->
   <div class="alc-messages" id="alc-panel-ia"></div>
-
-  <!-- Panel Conseiller -->
   <div class="alc-messages" id="alc-panel-advisor" style="display:none;"></div>
-
-  <!-- Input -->
   <div class="alc-input-area">
     <textarea id="alc-input" rows="1" placeholder="Posez votre question…" autocomplete="off"></textarea>
-    <button id="alc-send" aria-label="Envoyer">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
-    </button>
+    <button id="alc-send" aria-label="Envoyer"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></button>
   </div>
-
   <div class="alc-footer">Propulsé par IA · Réponses à titre indicatif</div>
 </div>
 
@@ -412,78 +140,97 @@
 (function() {
   'use strict';
 
-  // ══════════════════════════════════════
-  // CONFIG
-  // ══════════════════════════════════════
-  const CONFIG = {
+  var CONFIG = {
+    configEndpoint: '/api/method/alphalib_chat.api.advisor_chat.get_chat_config',
     aiEndpoint: '/api/method/alphalib_chat.api.ai_chat.chat',
     advisorSendEndpoint: '/api/method/alphalib_chat.api.advisor_chat.send_message',
     advisorGetEndpoint: '/api/method/alphalib_chat.api.advisor_chat.get_messages',
-    systemPrompt: `Tu es l'assistant IA du cabinet comptable AlphaLib. Tu aides les clients sur :
-- Questions comptables et fiscales (TVA, déclarations, bilans, charges sociales, CFE, URSSAF)
-- Support client général (factures, devis, paiements, relances)
-- Navigation dans l'espace client
-
-Règles :
-- Réponds toujours en français
-- Sois précis, professionnel mais accessible
-- Si tu n'es pas sûr, dis-le et conseille de contacter le comptable via l'onglet "Mon conseiller"
-- Ne donne JAMAIS de conseil fiscal définitif — rappelle que seul un expert-comptable peut valider
-- Formate tes réponses de façon concise`,
-    suggestions: [
-      'Quand déclarer ma TVA ?',
-      'Comment lire mon bilan ?',
-      'Ma CFE est-elle juste ?',
-      'Parler à mon conseiller'
-    ],
+    systemPrompt: '',
+    welcomeMessage: 'Bonjour ! Comment puis-je vous aider ?',
+    advisorName: 'Votre conseiller',
+    iaEnabled: true,
+    suggestions: ['Quand déclarer ma TVA ?', 'Comment lire mon bilan ?', 'Ma CFE est-elle juste ?', 'Parler à mon conseiller'],
     maxContext: 20,
     pollInterval: 10000
   };
 
-  // ══════════════════════════════════════
-  // STATE
-  // ══════════════════════════════════════
-  let activeTab = 'ia';
-  let isOpen = false;
-  let isLoading = false;
-  let aiConversation = [];
-  let advisorMessages = [];
-  let unreadAdvisor = 0;
-  let pollTimer = null;
+  var activeTab = 'ia', isOpen = false, isLoading = false;
+  var aiConversation = [], advisorMessages = [], unreadAdvisor = 0, pollTimer = null;
+  var advisorHistoryLoaded = false, realtimeSetup = false;
 
-  // ══════════════════════════════════════
-  // DOM
-  // ══════════════════════════════════════
-  const toggle = document.getElementById('alc-toggle');
-  const badge = document.getElementById('alc-badge');
-  const win = document.getElementById('alc-window');
-  const tabIa = document.getElementById('alc-tab-ia');
-  const tabAdvisor = document.getElementById('alc-tab-advisor');
-  const panelIa = document.getElementById('alc-panel-ia');
-  const panelAdvisor = document.getElementById('alc-panel-advisor');
-  const input = document.getElementById('alc-input');
-  const sendBtn = document.getElementById('alc-send');
-  const advisorBadge = document.getElementById('alc-advisor-badge');
+  var toggle = document.getElementById('alc-toggle');
+  var badge = document.getElementById('alc-badge');
+  var win = document.getElementById('alc-window');
+  var tabIa = document.getElementById('alc-tab-ia');
+  var tabAdvisor = document.getElementById('alc-tab-advisor');
+  var panelIa = document.getElementById('alc-panel-ia');
+  var panelAdvisor = document.getElementById('alc-panel-advisor');
+  var input = document.getElementById('alc-input');
+  var sendBtn = document.getElementById('alc-send');
+  var advisorBadge = document.getElementById('alc-advisor-badge');
 
-  // ══════════════════════════════════════
-  // HELPERS
-  // ══════════════════════════════════════
-  function scrollBottom(el) {
-    requestAnimationFrame(() => { el.scrollTop = el.scrollHeight; });
+  // ── Charger la config au démarrage ──
+  function initChat() {
+    fetch(CONFIG.configEndpoint, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-Frappe-CSRF-Token': getCsrf() },
+      body: JSON.stringify({})
+    })
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      var cfg = data.message || {};
+      if (!cfg.visible) return; // ne pas afficher le widget
+
+      if (cfg.welcome) CONFIG.welcomeMessage = cfg.welcome;
+      if (cfg.advisor_name) {
+        CONFIG.advisorName = cfg.advisor_name;
+        document.getElementById('alc-advisor-tab-label').textContent = cfg.advisor_name;
+      }
+      CONFIG.iaEnabled = cfg.ia_enabled !== false;
+
+      // Masquer l'onglet IA si désactivé
+      if (!CONFIG.iaEnabled) {
+        tabIa.style.display = 'none';
+        switchTab('advisor');
+      }
+
+      // Afficher le bouton
+      toggle.classList.add('ready');
+    })
+    .catch(function() {
+      // En cas d'erreur, afficher quand même le widget
+      toggle.classList.add('ready');
+    });
+  }
+
+  // ── Helpers ──
+  function scrollBottom(el) { requestAnimationFrame(function() { el.scrollTop = el.scrollHeight; }); }
+
+  function escapeHtml(t) { var d = document.createElement('div'); d.textContent = t; return d.innerHTML; }
+
+  function getCsrf() {
+    if (typeof frappe !== 'undefined' && frappe.csrf_token) return frappe.csrf_token;
+    var m = document.cookie.match(/csrf_token=([^;]+)/);
+    return m ? m[1] : '';
+  }
+
+  function getInitials(name) {
+    if (!name) return '??';
+    return name.split(' ').map(function(w) { return w[0]; }).join('').substring(0, 2).toUpperCase();
   }
 
   function addMsg(panel, text, cls, extra) {
     if (extra) {
-      const row = document.createElement('div');
+      var row = document.createElement('div');
       row.className = 'alc-advisor-row';
-      row.innerHTML = `<div class="alc-advisor-avatar">${extra.initials}</div>`;
-      const bubble = document.createElement('div');
+      row.innerHTML = '<div class="alc-advisor-avatar">' + extra.initials + '</div>';
+      var bubble = document.createElement('div');
       bubble.className = 'alc-msg advisor';
-      bubble.innerHTML = `<p class="alc-advisor-name">${extra.name}</p>${escapeHtml(text)}`;
+      bubble.innerHTML = '<p class="alc-advisor-name">' + escapeHtml(extra.name) + '</p>' + escapeHtml(text);
       row.appendChild(bubble);
       panel.appendChild(row);
     } else {
-      const div = document.createElement('div');
+      var div = document.createElement('div');
       div.className = 'alc-msg ' + cls;
       div.textContent = text;
       panel.appendChild(div);
@@ -491,238 +238,142 @@ Règles :
     scrollBottom(panel);
   }
 
-  function escapeHtml(t) {
-    const d = document.createElement('div');
-    d.textContent = t;
-    return d.innerHTML;
-  }
-
   function showTyping(panel) {
-    const d = document.createElement('div');
-    d.className = 'alc-typing';
-    d.id = 'alc-typing';
+    var d = document.createElement('div');
+    d.className = 'alc-typing'; d.id = 'alc-typing';
     d.innerHTML = '<span></span><span></span><span></span>';
-    panel.appendChild(d);
-    scrollBottom(panel);
+    panel.appendChild(d); scrollBottom(panel);
   }
 
-  function removeTyping() {
-    const el = document.getElementById('alc-typing');
-    if (el) el.remove();
-  }
+  function removeTyping() { var el = document.getElementById('alc-typing'); if (el) el.remove(); }
 
   function showSuggestions() {
-    const wrap = document.createElement('div');
+    var wrap = document.createElement('div');
     wrap.className = 'alc-suggestions';
-    wrap.id = 'alc-suggestions';
-    CONFIG.suggestions.forEach(text => {
-      const btn = document.createElement('button');
+    CONFIG.suggestions.forEach(function(text) {
+      var btn = document.createElement('button');
       btn.textContent = text;
-      btn.addEventListener('click', () => {
+      btn.addEventListener('click', function() {
         wrap.remove();
-        if (text === 'Parler à mon conseiller') {
-          switchTab('advisor');
-        } else {
-          handleSend(text);
-        }
+        if (text === 'Parler à mon conseiller') { switchTab('advisor'); }
+        else { handleSend(text); }
       });
       wrap.appendChild(btn);
     });
-    panelIa.appendChild(wrap);
-    scrollBottom(panelIa);
-  }
-
-  function getInitials(name) {
-    if (!name) return '??';
-    return name.split(' ').map(w => w[0]).join('').substring(0, 2).toUpperCase();
+    panelIa.appendChild(wrap); scrollBottom(panelIa);
   }
 
   function updateBadges() {
     if (unreadAdvisor > 0) {
-      advisorBadge.textContent = unreadAdvisor;
-      advisorBadge.classList.add('show');
-      if (!isOpen || activeTab !== 'advisor') {
-        badge.textContent = unreadAdvisor;
-        badge.classList.add('show');
-      }
-    } else {
-      advisorBadge.classList.remove('show');
-      badge.classList.remove('show');
-    }
+      advisorBadge.textContent = unreadAdvisor; advisorBadge.classList.add('show');
+      if (!isOpen || activeTab !== 'advisor') { badge.textContent = unreadAdvisor; badge.classList.add('show'); }
+    } else { advisorBadge.classList.remove('show'); badge.classList.remove('show'); }
   }
 
-  function getCsrf() {
-    if (typeof frappe !== 'undefined' && frappe.csrf_token) return frappe.csrf_token;
-    const m = document.cookie.match(/csrf_token=([^;]+)/);
-    return m ? m[1] : '';
-  }
-
-  // ══════════════════════════════════════
-  // TAB SWITCHING
-  // ══════════════════════════════════════
+  // ── Onglets ──
   function switchTab(tab) {
     activeTab = tab;
     tabIa.classList.toggle('active', tab === 'ia');
     tabAdvisor.classList.toggle('active', tab === 'advisor');
     panelIa.style.display = tab === 'ia' ? 'flex' : 'none';
     panelAdvisor.style.display = tab === 'advisor' ? 'flex' : 'none';
-
     input.placeholder = tab === 'ia' ? 'Posez votre question…' : 'Écrivez à votre conseiller…';
-
     if (tab === 'advisor') {
-      unreadAdvisor = 0;
-      updateBadges();
-      if (panelAdvisor.children.length === 0) loadAdvisorMessages();
+      unreadAdvisor = 0; updateBadges();
+      if (!advisorHistoryLoaded) loadAdvisorMessages();
       scrollBottom(panelAdvisor);
-    } else {
-      scrollBottom(panelIa);
-    }
+    } else { scrollBottom(panelIa); }
   }
 
-  tabIa.addEventListener('click', () => switchTab('ia'));
-  tabAdvisor.addEventListener('click', () => switchTab('advisor'));
+  tabIa.addEventListener('click', function() { switchTab('ia'); });
+  tabAdvisor.addEventListener('click', function() { switchTab('advisor'); });
 
-  // ══════════════════════════════════════
-  // AI CHAT
-  // ══════════════════════════════════════
+  // ── Chat IA ──
   async function sendAiMessage(text) {
     addMsg(panelIa, text, 'user');
     aiConversation.push({ role: 'user', content: text });
-    if (aiConversation.length > CONFIG.maxContext) {
-      aiConversation = aiConversation.slice(-CONFIG.maxContext);
-    }
-
-    isLoading = true;
-    sendBtn.disabled = true;
-    showTyping(panelIa);
-
+    if (aiConversation.length > CONFIG.maxContext) aiConversation = aiConversation.slice(-CONFIG.maxContext);
+    isLoading = true; sendBtn.disabled = true; showTyping(panelIa);
     try {
-      const res = await fetch(CONFIG.aiEndpoint, {
+      var res = await fetch(CONFIG.aiEndpoint, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-Frappe-CSRF-Token': getCsrf()
-        },
-        body: JSON.stringify({
-          messages: aiConversation,
-          system_prompt: CONFIG.systemPrompt
-        })
+        headers: { 'Content-Type': 'application/json', 'X-Frappe-CSRF-Token': getCsrf() },
+        body: JSON.stringify({ messages: aiConversation, system_prompt: CONFIG.systemPrompt })
       });
-      const data = await res.json();
-
+      var data = await res.json();
       if (data.message && data.message.reply) {
-        const reply = data.message.reply;
-        aiConversation.push({ role: 'assistant', content: reply });
-        removeTyping();
-        addMsg(panelIa, reply, 'ai');
-      } else {
-        throw new Error(data.exc || 'Erreur');
-      }
+        aiConversation.push({ role: 'assistant', content: data.message.reply });
+        removeTyping(); addMsg(panelIa, data.message.reply, 'ai');
+      } else { throw new Error('Erreur'); }
     } catch (err) {
-      console.error('AI Chat error:', err);
-      removeTyping();
-      addMsg(panelIa, 'Désolé, une erreur est survenue. Essayez l\'onglet "Mon conseiller" pour parler à un humain.', 'ai');
-    } finally {
-      isLoading = false;
-      sendBtn.disabled = false;
-      input.focus();
-    }
+      removeTyping(); addMsg(panelIa, 'Désolé, une erreur est survenue. Essayez l\'onglet "' + CONFIG.advisorName + '" pour parler à un humain.', 'ai');
+    } finally { isLoading = false; sendBtn.disabled = false; input.focus(); }
   }
 
-  // ══════════════════════════════════════
-  // ADVISOR CHAT
-  // ══════════════════════════════════════
+  // ── Chat Conseiller ──
   async function loadAdvisorMessages() {
     try {
-      const res = await fetch(CONFIG.advisorGetEndpoint, {
+      var res = await fetch(CONFIG.advisorGetEndpoint, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-Frappe-CSRF-Token': getCsrf()
-        },
+        headers: { 'Content-Type': 'application/json', 'X-Frappe-CSRF-Token': getCsrf() },
         body: JSON.stringify({})
       });
-      const data = await res.json();
-
+      var data = await res.json();
       if (data.message && Array.isArray(data.message)) {
         panelAdvisor.innerHTML = '';
-        const currentUser = (typeof frappe !== 'undefined' && frappe.session) ? frappe.session.user : '';
+        var currentUser = (typeof frappe !== 'undefined' && frappe.session) ? frappe.session.user : '';
 
         if (data.message.length === 0) {
-          addMsg(panelAdvisor, 'Votre conseiller est disponible. Envoyez un message pour démarrer la conversation.', 'advisor', {
-            initials: 'AL',
-            name: 'AlphaLib'
-          });
+          addMsg(panelAdvisor, CONFIG.advisorName + ' est disponible. Envoyez un message pour démarrer la conversation.', 'advisor', { initials: 'AL', name: 'AlphaLib' });
         }
 
-        data.message.forEach(msg => {
+        data.message.forEach(function(msg) {
           if (msg.sender === currentUser || msg.sender_type === 'Client') {
             addMsg(panelAdvisor, msg.content, 'user');
           } else {
-            addMsg(panelAdvisor, msg.content, 'advisor', {
-              initials: getInitials(msg.sender_name),
-              name: msg.sender_name || 'Conseiller'
-            });
+            addMsg(panelAdvisor, msg.content, 'advisor', { initials: getInitials(msg.sender_name), name: msg.sender_name || CONFIG.advisorName });
           }
         });
 
         advisorMessages = data.message;
+        advisorHistoryLoaded = true;
       }
-    } catch (err) {
-      console.error('Load advisor messages error:', err);
-    }
+    } catch (err) { console.error('Load advisor messages error:', err); }
   }
 
   async function sendAdvisorMessage(text) {
     addMsg(panelAdvisor, text, 'user');
-
     try {
       await fetch(CONFIG.advisorSendEndpoint, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-Frappe-CSRF-Token': getCsrf()
-        },
+        headers: { 'Content-Type': 'application/json', 'X-Frappe-CSRF-Token': getCsrf() },
         body: JSON.stringify({ content: text })
       });
     } catch (err) {
-      console.error('Send advisor message error:', err);
-      addMsg(panelAdvisor, 'Erreur d\'envoi. Veuillez réessayer.', 'advisor', {
-        initials: 'AL',
-        name: 'Système'
-      });
+      addMsg(panelAdvisor, 'Erreur d\'envoi. Veuillez réessayer.', 'advisor', { initials: 'AL', name: 'Système' });
     }
   }
 
-  // Polling pour nouveaux messages conseiller
+  // ── Polling ──
   function startPolling() {
     if (pollTimer) return;
-    pollTimer = setInterval(async () => {
-      if (!isOpen && unreadAdvisor > 0) return;
+    pollTimer = setInterval(async function() {
       try {
-        const res = await fetch(CONFIG.advisorGetEndpoint, {
+        var res = await fetch(CONFIG.advisorGetEndpoint, {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'X-Frappe-CSRF-Token': getCsrf()
-          },
+          headers: { 'Content-Type': 'application/json', 'X-Frappe-CSRF-Token': getCsrf() },
           body: JSON.stringify({})
         });
-        const data = await res.json();
+        var data = await res.json();
         if (data.message && Array.isArray(data.message) && data.message.length > advisorMessages.length) {
-          const newMsgs = data.message.slice(advisorMessages.length);
-          const currentUser = (typeof frappe !== 'undefined' && frappe.session) ? frappe.session.user : '';
-
-          newMsgs.forEach(msg => {
+          var newMsgs = data.message.slice(advisorMessages.length);
+          var currentUser = (typeof frappe !== 'undefined' && frappe.session) ? frappe.session.user : '';
+          newMsgs.forEach(function(msg) {
             if (msg.sender !== currentUser && msg.sender_type !== 'Client') {
               if (activeTab !== 'advisor' || !isOpen) unreadAdvisor++;
-              addMsg(panelAdvisor, msg.content, 'advisor', {
-                initials: getInitials(msg.sender_name),
-                name: msg.sender_name || 'Conseiller'
-              });
+              addMsg(panelAdvisor, msg.content, 'advisor', { initials: getInitials(msg.sender_name), name: msg.sender_name || CONFIG.advisorName });
             }
           });
-
           advisorMessages = data.message;
           updateBadges();
         }
@@ -730,81 +381,58 @@ Règles :
     }, CONFIG.pollInterval);
   }
 
-  // Realtime via Frappe socket (si disponible)
+  // ── Realtime ──
   function setupRealtime() {
+    if (realtimeSetup) return;
+    realtimeSetup = true;
     if (typeof frappe !== 'undefined' && frappe.realtime && frappe.realtime.on) {
       frappe.realtime.on('alphalib_new_message', function(data) {
-        const currentUser = frappe.session ? frappe.session.user : '';
+        var currentUser = frappe.session ? frappe.session.user : '';
         if (data.sender !== currentUser && data.sender_type === 'Advisor') {
           advisorMessages.push(data);
-          addMsg(panelAdvisor, data.content, 'advisor', {
-            initials: getInitials(data.sender_name),
-            name: data.sender_name || 'Conseiller'
-          });
-          if (activeTab !== 'advisor' || !isOpen) {
-            unreadAdvisor++;
-            updateBadges();
-          }
+          addMsg(panelAdvisor, data.content, 'advisor', { initials: getInitials(data.sender_name), name: data.sender_name || CONFIG.advisorName });
+          if (activeTab !== 'advisor' || !isOpen) { unreadAdvisor++; updateBadges(); }
         }
       });
     }
   }
 
-  // ══════════════════════════════════════
-  // SEND (dispatch selon onglet actif)
-  // ══════════════════════════════════════
+  // ── Envoi ──
   function handleSend(overrideText) {
-    const text = (overrideText || input.value).trim();
+    var text = (overrideText || input.value).trim();
     if (!text || isLoading) return;
-    input.value = '';
-    autoResize();
-
-    if (activeTab === 'ia') {
-      sendAiMessage(text);
-    } else {
-      sendAdvisorMessage(text);
-    }
+    input.value = ''; autoResize();
+    if (activeTab === 'ia') { sendAiMessage(text); } else { sendAdvisorMessage(text); }
   }
 
-  // ══════════════════════════════════════
-  // UI CONTROLS
-  // ══════════════════════════════════════
-  toggle.addEventListener('click', () => {
+  // ── UI Controls ──
+  toggle.addEventListener('click', function() {
     isOpen = !isOpen;
     win.classList.toggle('visible', isOpen);
     toggle.classList.toggle('active', isOpen);
-
     if (isOpen) {
-      if (panelIa.children.length === 0) {
-        setTimeout(() => {
-          addMsg(panelIa, 'Bonjour ! Je suis l\'assistant IA d\'AlphaLib. Comment puis-je vous aider ?', 'ai');
+      if (panelIa.children.length === 0 && CONFIG.iaEnabled) {
+        setTimeout(function() {
+          addMsg(panelIa, CONFIG.welcomeMessage, 'ai');
           showSuggestions();
         }, 200);
       }
-      if (activeTab === 'advisor') {
-        unreadAdvisor = 0;
-        updateBadges();
-      }
+      if (!advisorHistoryLoaded) loadAdvisorMessages();
+      if (activeTab === 'advisor') { unreadAdvisor = 0; updateBadges(); }
       input.focus();
       startPolling();
       setupRealtime();
     }
   });
 
-  sendBtn.addEventListener('click', () => handleSend());
+  sendBtn.addEventListener('click', function() { handleSend(); });
+  input.addEventListener('keydown', function(e) { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSend(); } });
 
-  input.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault();
-      handleSend();
-    }
-  });
-
-  function autoResize() {
-    input.style.height = 'auto';
-    input.style.height = Math.min(input.scrollHeight, 90) + 'px';
-  }
+  function autoResize() { input.style.height = 'auto'; input.style.height = Math.min(input.scrollHeight, 90) + 'px'; }
   input.addEventListener('input', autoResize);
+
+  // ── Init ──
+  initChat();
 
 })();
 </script>

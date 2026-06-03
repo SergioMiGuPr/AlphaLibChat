@@ -1,5 +1,6 @@
 {
   "name": "chat-console",
+  "doctype": "Page",
   "page_name": "chat-console",
   "title": "Chat Clients",
   "module": "AlphaLib Chat",
