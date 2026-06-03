@@ -6,12 +6,15 @@ app_email = "contact@alphalib.fr"
 app_license = "MIT"
 required_apps = ["frappe"]
 
-# Website context
-website_context = {}
-
-# Doc Events - notifier le comptable quand un message arrive
+# Doc Events
 doc_events = {
     "AlphaLib Chat Message": {
         "after_insert": "alphalib_chat.api.advisor_chat.notify_advisor"
     }
+}
+
+# Website context — expose chat config to website pages
+website_context = {
+    "include_js": [],
+    "include_css": []
 }

@@ -1,6 +1,6 @@
 """
-API endpoint pour le chat IA (onglet Assistant IA).
-Proxy serveur vers l'API Claude — la clé API reste côté serveur.
+API pour le chat IA (onglet Assistant IA).
+Proxy serveur vers l'API Claude.
 """
 
 import frappe
@@ -10,24 +10,27 @@ import requests
 
 @frappe.whitelist(allow_guest=False)
 def chat():
-    """
-    Reçoit les messages du widget chatbox et les transmet à l'API Claude.
-    Uniquement accessible aux utilisateurs connectés.
-    """
     data = frappe.request.get_json() if frappe.request.is_json else json.loads(frappe.form_dict.get("data", "{}"))
 
     messages = data.get("messages", [])
     system_prompt = data.get("system_prompt", "")
 
+    # Récupérer le prompt depuis les settings si configuré
+    try:
+        settings = frappe.get_single("AlphaLib Chat Settings")
+        if settings.ia_system_prompt:
+            system_prompt = settings.ia_system_prompt
+    except Exception:
+        pass
+
     if not messages:
         frappe.throw("Aucun message fourni")
 
-    # Validation anti-abus
     last_message = messages[-1].get("content", "")
     if len(last_message) > 2000:
         frappe.throw("Message trop long (max 2000 caractères)")
 
-    # Rate limiting simple : 30 requêtes par heure par utilisateur
+    # Rate limiting
     user = frappe.session.user
     cache_key = f"alphalib_chat_ratelimit:{user}"
     count = frappe.cache().get(cache_key) or 0
@@ -35,31 +38,25 @@ def chat():
         frappe.throw("Trop de messages envoyés. Veuillez patienter quelques minutes.")
     frappe.cache().set(cache_key, int(count) + 1, expires_in_sec=3600)
 
-    # Limiter le contexte
     if len(messages) > 20:
         messages = messages[-20:]
 
-    # Récupérer la clé API depuis site_config
     api_key = frappe.conf.get("anthropic_api_key")
     if not api_key:
-        frappe.throw("Clé API Anthropic non configurée. Ajoutez 'anthropic_api_key' dans site_config.json")
+        frappe.throw("Clé API Anthropic non configurée dans site_config.json")
 
     reply = call_claude(api_key, system_prompt, messages)
     return {"reply": reply}
 
 
 def call_claude(api_key, system_prompt, messages):
-    """Appelle l'API Claude via HTTP."""
-
     url = "https://api.anthropic.com/v1/messages"
-
     headers = {
         "Content-Type": "application/json",
         "x-api-key": api_key,
         "anthropic-version": "2023-06-01"
     }
 
-    # Nettoyer les messages
     clean_messages = []
     for msg in messages:
         role = msg.get("role", "user")
@@ -81,19 +78,15 @@ def call_claude(api_key, system_prompt, messages):
         response = requests.post(url, headers=headers, json=payload, timeout=60)
         response.raise_for_status()
         result = response.json()
-
         content_blocks = result.get("content", [])
         reply_parts = [block["text"] for block in content_blocks if block.get("type") == "text"]
         return "\n".join(reply_parts) if reply_parts else "Désolé, je n'ai pas pu générer de réponse."
-
     except requests.exceptions.Timeout:
         frappe.log_error("Claude API Timeout", "alphalib_chat")
         return "Le service est temporairement lent. Veuillez réessayer."
-
     except requests.exceptions.HTTPError as e:
         frappe.log_error(f"Claude API Error: {e.response.status_code} - {e.response.text}", "alphalib_chat")
         return "Une erreur technique est survenue."
-
     except Exception as e:
         frappe.log_error(f"Claude API Error: {str(e)}", "alphalib_chat")
         return "Une erreur inattendue est survenue. Contactez le cabinet directement."
