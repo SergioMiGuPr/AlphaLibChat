@@ -3,88 +3,24 @@
   "module": "AlphaLib Chat",
   "doctype": "DocType",
   "engine": "InnoDB",
-  "naming_rule": "Autoincrement",
+  "naming_rule": "Expression",
   "autoname": "ALCHAT-.#####",
   "is_submittable": 0,
   "istable": 0,
-  "editable_grid": 0,
-  "track_changes": 0,
   "fields": [
-    {
-      "fieldname": "sender",
-      "fieldtype": "Link",
-      "label": "Sender",
-      "options": "User",
-      "reqd": 1,
-      "in_list_view": 1
-    },
-    {
-      "fieldname": "sender_name",
-      "fieldtype": "Data",
-      "label": "Sender Name",
-      "read_only": 1,
-      "in_list_view": 1
-    },
-    {
-      "fieldname": "sender_type",
-      "fieldtype": "Select",
-      "label": "Sender Type",
-      "options": "Client\nAdvisor",
-      "reqd": 1,
-      "in_list_view": 1
-    },
-    {
-      "fieldname": "recipient",
-      "fieldtype": "Link",
-      "label": "Recipient",
-      "options": "User"
-    },
-    {
-      "fieldname": "column_break_1",
-      "fieldtype": "Column Break"
-    },
-    {
-      "fieldname": "channel",
-      "fieldtype": "Select",
-      "label": "Channel",
-      "options": "advisor\nai",
-      "default": "advisor",
-      "reqd": 1
-    },
-    {
-      "fieldname": "read",
-      "fieldtype": "Check",
-      "label": "Read",
-      "default": 0
-    },
-    {
-      "fieldname": "section_break_content",
-      "fieldtype": "Section Break",
-      "label": "Message"
-    },
-    {
-      "fieldname": "content",
-      "fieldtype": "Text",
-      "label": "Content",
-      "reqd": 1
-    }
+    {"fieldname": "sender", "fieldtype": "Data", "label": "Sender", "reqd": 1, "in_list_view": 1},
+    {"fieldname": "sender_name", "fieldtype": "Data", "label": "Sender Name", "in_list_view": 1},
+    {"fieldname": "sender_type", "fieldtype": "Select", "label": "Sender Type", "options": "Client\nAdvisor", "reqd": 1, "in_list_view": 1},
+    {"fieldname": "recipient", "fieldtype": "Data", "label": "Recipient"},
+    {"fieldname": "channel", "fieldtype": "Select", "label": "Channel", "options": "advisor\nai", "default": "advisor", "reqd": 1},
+    {"fieldname": "read", "fieldtype": "Check", "label": "Read", "default": 0},
+    {"fieldname": "content", "fieldtype": "Text", "label": "Content", "reqd": 1}
   ],
   "permissions": [
-    {
-      "role": "System Manager",
-      "read": 1,
-      "write": 1,
-      "create": 1,
-      "delete": 1
-    },
-    {
-      "role": "Accountant",
-      "read": 1,
-      "write": 1,
-      "create": 1
-    }
+    {"role": "System Manager", "read": 1, "write": 1, "create": 1, "delete": 1},
+    {"role": "All", "read": 1, "write": 1, "create": 1}
   ],
   "sort_field": "creation",
   "sort_order": "DESC",
-  "modified": "2025-06-01 12:00:00.000000"
+  "modified": "2025-06-03 12:00:00.000000"
 }

@@ -5,99 +5,19 @@
   "engine": "InnoDB",
   "issingle": 1,
   "istable": 0,
-  "editable_grid": 0,
-  "track_changes": 0,
   "fields": [
-    {
-      "fieldname": "section_widget",
-      "fieldtype": "Section Break",
-      "label": "Widget Chatbox"
-    },
-    {
-      "fieldname": "widget_enabled",
-      "fieldtype": "Check",
-      "label": "Activer le chatbox sur le website",
-      "default": 1
-    },
-    {
-      "fieldname": "widget_roles",
-      "fieldtype": "Small Text",
-      "label": "Rôles autorisés à voir le chatbox",
-      "description": "Un rôle par ligne. Ex: Customer, System Manager. Laisser vide = visible pour tous les utilisateurs connectés."
-    },
-    {
-      "fieldname": "column_break_widget",
-      "fieldtype": "Column Break"
-    },
-    {
-      "fieldname": "advisor_display_name",
-      "fieldtype": "Data",
-      "label": "Nom affiché du conseiller",
-      "default": "Votre conseiller",
-      "description": "Le nom qui apparaît dans l'onglet 'Mon conseiller'"
-    },
-    {
-      "fieldname": "section_ia",
-      "fieldtype": "Section Break",
-      "label": "Assistant IA"
-    },
-    {
-      "fieldname": "ia_enabled",
-      "fieldtype": "Check",
-      "label": "Activer l'onglet Assistant IA",
-      "default": 1
-    },
-    {
-      "fieldname": "ia_system_prompt",
-      "fieldtype": "Text",
-      "label": "Prompt système (instructions pour l'IA)",
-      "default": "Tu es l'assistant IA du cabinet comptable AlphaLib. Tu aides les clients sur les questions comptables, fiscales et de support. Réponds en français, sois concis et professionnel. Ne donne jamais de conseil fiscal définitif."
-    },
-    {
-      "fieldname": "ia_welcome_message",
-      "fieldtype": "Data",
-      "label": "Message d'accueil de l'IA",
-      "default": "Bonjour ! Je suis l'assistant IA d'AlphaLib. Comment puis-je vous aider ?"
-    },
-    {
-      "fieldname": "section_notifications",
-      "fieldtype": "Section Break",
-      "label": "Notifications"
-    },
-    {
-      "fieldname": "email_enabled",
-      "fieldtype": "Check",
-      "label": "Activer les notifications email",
-      "default": 1
-    },
-    {
-      "fieldname": "notification_emails",
-      "fieldtype": "Small Text",
-      "label": "Adresses email à notifier",
-      "description": "Une adresse par ligne. Ces personnes recevront un email quand un client envoie un message."
-    },
-    {
-      "fieldname": "column_break_notif",
-      "fieldtype": "Column Break"
-    },
-    {
-      "fieldname": "notification_roles",
-      "fieldtype": "Small Text",
-      "label": "Rôles à notifier",
-      "description": "Un rôle par ligne. Tous les utilisateurs ayant ce rôle recevront les notifications. Ex: Accountant"
-    }
+    {"fieldname": "widget_enabled", "fieldtype": "Check", "label": "Activer le chatbox", "default": 1},
+    {"fieldname": "widget_roles", "fieldtype": "Small Text", "label": "Rôles autorisés (un par ligne)"},
+    {"fieldname": "advisor_display_name", "fieldtype": "Data", "label": "Nom du conseiller", "default": "Votre conseiller"},
+    {"fieldname": "ia_enabled", "fieldtype": "Check", "label": "Activer l'IA", "default": 1},
+    {"fieldname": "ia_system_prompt", "fieldtype": "Text", "label": "Prompt système IA"},
+    {"fieldname": "ia_welcome_message", "fieldtype": "Data", "label": "Message d'accueil", "default": "Bonjour ! Comment puis-je vous aider ?"},
+    {"fieldname": "email_enabled", "fieldtype": "Check", "label": "Activer les emails", "default": 1},
+    {"fieldname": "notification_emails", "fieldtype": "Small Text", "label": "Emails à notifier (un par ligne)"},
+    {"fieldname": "notification_roles", "fieldtype": "Small Text", "label": "Rôles à notifier (un par ligne)"}
   ],
   "permissions": [
-    {
-      "role": "System Manager",
-      "read": 1,
-      "write": 1,
-      "create": 1
-    },
-    {
-      "role": "Accountant",
-      "read": 1
-    }
+    {"role": "System Manager", "read": 1, "write": 1, "create": 1}
   ],
-  "modified": "2025-06-01 12:00:00.000000"
+  "modified": "2025-06-03 12:00:00.000000"
 }
