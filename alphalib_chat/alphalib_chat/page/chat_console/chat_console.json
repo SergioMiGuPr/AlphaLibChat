@@ -1,0 +1,15 @@
+{
+  "creation": "2025-06-03 12:00:00.000000",
+  "doctype": "Page",
+  "modified": "2025-06-03 12:00:00.000000",
+  "module": "AlphaLib Chat",
+  "name": "chat-console",
+  "page_name": "chat-console",
+  "standard": "Yes",
+  "system_page": 0,
+  "title": "Chat Clients",
+  "roles": [
+    {"role": "System Manager"},
+    {"role": "Accountant"}
+  ]
+}
