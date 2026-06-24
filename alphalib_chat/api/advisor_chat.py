@@ -363,3 +363,13 @@ def _send_email_notification(doc, recipients):
         )
     except Exception as e:
         frappe.log_error(f"Email notification error: {str(e)}", "alphalib_chat")
+
+@frappe.whitelist(allow_guest=False)
+def get_unread_count():
+    """Nombre total de messages clients non lus."""
+    count = frappe.db.count("AlphaLib Chat Message", {
+        "sender_type": "Client",
+        "channel": "advisor",
+        "read": 0
+    })
+    return count
