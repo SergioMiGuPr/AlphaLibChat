@@ -36,7 +36,7 @@ def chat():
     count = frappe.cache().get(cache_key) or 0
     if int(count) >= 30:
         frappe.throw("Trop de messages envoyés. Veuillez patienter quelques minutes.")
-    frappe.cache().set(cache_key, int(count) + 1, expires_in_sec=3600)
+        frappe.cache().set(cache_key, int(count) + 1, ex=3600)
 
     if len(messages) > 20:
         messages = messages[-20:]
