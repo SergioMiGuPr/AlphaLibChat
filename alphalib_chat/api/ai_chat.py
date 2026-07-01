@@ -68,7 +68,7 @@ def call_claude(api_key, system_prompt, messages):
         frappe.throw("La conversation doit commencer par un message utilisateur")
 
     payload = {
-        "model": "claude-sonnet-4-20250514",
+        "model": "claude-sonnet-4-6",
         "max_tokens": 1024,
         "system": system_prompt,
         "messages": clean_messages
